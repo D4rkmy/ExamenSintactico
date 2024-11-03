@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analizador de CURP</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4ff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #6a1b9a;
+            margin-bottom: 20px;
+        }
+        .form-container {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 10px; 
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            border: 1px solid #bbdefb;
+            border-radius: 6px;
+            padding: 10px;
+            background-color: #e3f2fd;
+            box-sizing: border-box;
+            resize: none; 
+        }
+        .form-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px; 
+        }
+        button {
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+            max-width: calc(50% - 5px);
+            color: white;
+            border: none;
+        }
+        button#analizar {
+            background-color: #f48fb1;
+        }
+        button#borrar {
+            background-color: #90caf9;
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+        .result-container {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 600px;
+            text-align: left;
+        }
+        .result-container h2 {
+            color: #6a1b9a;
+            margin-bottom: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #6a1b9a;
+            color: white;
+            font-weight: bold;
+        }
+        .error {
+            color: #d5006d;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+    <script>
+        function clearResults() {
+            document.querySelector("textarea[name='curp']").value = "";
+            const resultContainer = document.querySelector('.result-container');
+            if (resultContainer) {
+                resultContainer.innerHTML = ''; 
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Analizador de CURP</h1>
+    <div class="form-container">
+        <form method="POST">
+            <textarea name="curp" id="curp" placeholder="Ingrese la CURP...">{{ request.form.get('curp', '') }}</textarea>
+            <div class="form-buttons">
+                <button type="submit" id="analizar">Analizar CURP</button>
+                <button type="button" id="borrar" onclick="clearResults()">Borrar</button>
+            </div>
+        </form>
+    </div>
+    {% if resultado %}
+    <div class="result-container">
+        <h2>Resultados</h2>
+        {% if resultado.error %}
+            <p class="error">{{ resultado.error }}</p>
+        {% else %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tipo de Token</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Apellido Paterno</td>
+                        <td>{{ resultado.apellido_paterno }}</td>
+                    </tr>
+                    <tr>
+                        <td>Apellido Materno</td>
+                        <td>{{ resultado.apellido_materno }}</td>
+                    </tr>
+                    <tr>
+                        <td>Nombre</td>
+                        <td>{{ resultado.nombre }}</td>
+                    </tr>
+                    <tr>
+                        <td>Año de Nacimiento</td>
+                        <td>{{ resultado.año_nacimiento }}</td>
+                    </tr>
+                    <tr>
+                        <td>Mes de Nacimiento</td>
+                        <td>{{ resultado.mes_nacimiento }}</td>
+                    </tr>
+                    <tr>
+                        <td>Día de Nacimiento</td>
+                        <td>{{ resultado.dia_nacimiento }}</td>
+                    </tr>
+                    <tr>
+                        <td>Sexo</td>
+                        <td>{{ resultado.sexo }}</td>
+                    </tr>
+                    <tr>
+                        <td>Estado</td>
+                        <td>{{ resultado.estado }}</td>
+                    </tr>
+                    <tr>
+                        <td>Consonante Apellido Paterno</td>
+                        <td>{{ resultado.consonante_paterno }}</td>
+                    </tr>
+                    <tr>
+                        <td>Consonante Apellido Materno</td>
+                        <td>{{ resultado.consonante_materno }}</td>
+                    </tr>
+                    <tr>
+                        <td>Consonante Nombre</td>
+                        <td>{{ resultado.consonante_nombre }}</td>
+                    </tr>
+                    <tr>
+                        <td>Homoclave</td>
+                        <td>{{ resultado.homoclave }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <h3>Contador de Tokens</h3>
+            <p>Total de Letras: {{ resultado.total_letras }}</p>
+            <p>Total de Números: {{ resultado.total_numeros }}</p>
+        {% endif %}
+    </div>
+    {% endif %}
+</body>
+</html>
